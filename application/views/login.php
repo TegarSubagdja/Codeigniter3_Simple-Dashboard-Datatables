@@ -19,12 +19,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
 			<h3 class="title">Selamat Datang</h3>
 			<p class="text-center text-muted" style="margin-bottom: 25px;">Masuk untuk melanjutkan ke Dashboard Anda.</p>
 
-			<form method="POST" action="<?= site_url('auth/do_login') ?>">
+			<form method="POST" action="<?= site_url('auth/login') ?>">
 				<div class="form-group">
-					<label for="username">Email atau Username</label>
+					<label for="Email">Email</label>
 					<div class="input-group">
 						<span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-						<input type="text" id="username" name="username" class="form-control" placeholder="Masukkan email atau username" required>
+						<input type="Email" id="Email" name="Email" class="form-control" placeholder="Masukkan Email" required>
 					</div>
 				</div>
 				<div class="form-group">

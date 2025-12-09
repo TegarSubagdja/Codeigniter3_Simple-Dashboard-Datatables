@@ -44,7 +44,7 @@
 							<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
 								<li><a href="#"><i class="fa fa-user fa-fw"></i> Profile Settings</a></li>
 								<li role="separator" class="divider"></li>
-								<li><a href="<?= site_url('login') ?>" class="text-danger"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
+								<li><a href="<?= site_url('logout') ?>" class="text-danger"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
 							</ul>
 						</div>
 					</div>
@@ -137,23 +137,23 @@
 					<form action="<?= site_url('equipment/store') ?>" method="post" enctype="multipart/form-data">
 						<div class="form-group">
 							<label for="product_name">Nama Produk</label>
-							<input type="text" class="form-control" id="product_name" name="name" value="tes" required>
+							<input type="text" class="form-control" id="product_name" name="name" required>
 						</div>
 						<div class="form-group">
 							<label for="product_category">Kategori</label>
-							<input type="text" class="form-control" id="product_category" name="category" value="tes" required>
+							<input type="text" class="form-control" id="product_category" name="category" required>
 						</div>
 						<div class="form-group">
-							<label for="product_stok">Stok Barang</label>
-							<input type="number" class="formcontrol" id="product_stok" name="stok" value="tes" required>
+							<label for="product_stok">Jumlah</label>
+							<input type="number" class="form-control" id="product_stok" name="stock" required>
 						</div>
 						<div class="form-group">
 							<label for="product_location">Lokasi</label>
-							<input type="text" class="form-control" id="product_location" name="location" value="tes" required>
+							<input type="text" class="form-control" id="product_location" name="location" required>
 						</div>
 						<div class="form-group">
 							<label for="product_specs">Description / Specs</label>
-							<textarea class="form-control" id="product_specs" name="specs" rows="3" required>value="tes"</textarea>
+							<textarea class="form-control" id="product_specs" name="specs" rows="3" required></textarea>
 						</div>
 						<div class="form-group">
 							<label for="product_manual">Buku Panduan (PDF)</label>

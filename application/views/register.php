@@ -18,13 +18,13 @@
 			<h3 class="title">Buat Akun Baru</h3>
 			<p class="text-center text-muted" style="margin-bottom: 25px;">Daftar untuk mengakses Dashboard Anda.</p>
 
-			<form action="<?= site_url('register/submit') ?>" method="POST">
+			<form action="<?= site_url('auth/register') ?>" method="POST">
 
 				<div class="form-group">
-					<label for="username">Username</label>
+					<label for="name">Nama</label>
 					<div class="input-group">
 						<span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-						<input type="text" id="username" class="form-control" required name="username" placeholder="Masukkan username unik">
+						<input type="text" id="name" class="form-control" required name="name" placeholder="Masukkan name">
 					</div>
 				</div>
 
@@ -53,7 +53,7 @@
 			<hr>
 
 			<p class="text-center highlight">
-				Sudah punya akun? <a href="<?= site_url('home') ?>">Masuk (Login)</a>
+				Sudah punya akun? <a href="<?= site_url('login') ?>">Masuk (Login)</a>
 			</p>
 		</div>
 	</div>

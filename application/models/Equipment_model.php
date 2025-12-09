@@ -2,6 +2,8 @@
 class Equipment_model extends CI_Model
 {
 
+	protected $table = 'equipment';
+
 	public function getAll()
 	{
 		return $this->db->get('equipment')->result();

@@ -24,13 +24,10 @@ class Equipment extends CI_Controller
 
 	public function store()
 	{
-		// Pastikan library Session dimuat (biasanya di autoload.php)
-
 		$image = null;
 		$manual = null;
-		$error = array(); // Array untuk menyimpan pesan error upload
+		$error = array();
 
-		// --- 1. PROSES UPLOAD GAMBAR PRODUK (image) ---
 		$configImg['upload_path']   = './uploads/images/';
 		$configImg['allowed_types'] = 'jpg|png|jpeg';
 		$configImg['max_size']      = 2048; // Max 2MB
@@ -38,7 +35,6 @@ class Equipment extends CI_Controller
 
 		$this->load->library('upload', $configImg);
 
-		// Hanya coba upload jika file benar-benar dikirim
 		if (!empty($_FILES['image']['name'])) {
 			if ($this->upload->do_upload('image')) {
 				$image = $this->upload->data('file_name');
@@ -51,33 +47,25 @@ class Equipment extends CI_Controller
 			// $error['image'] = 'Gambar produk wajib diisi.';
 		}
 
-		// --- 2. PROSES UPLOAD BUKU PANDUAN (manual) ---
 		$configPdf['upload_path']   = './uploads/manuals/';
 		$configPdf['allowed_types'] = 'pdf';
 		$configPdf['max_size']      = 4096; // Max 4MB
 		$configPdf['encrypt_name']  = TRUE;
 
-		// Inisialisasi ulang library 'upload' dengan konfigurasi PDF
 		$this->upload->initialize($configPdf);
 
-		// Hanya coba upload jika file benar-benar dikirim
 		if (!empty($_FILES['manual']['name'])) {
 			if ($this->upload->do_upload('manual')) {
 				$manual = $this->upload->data('file_name');
 			} else {
-				// Gagal Upload Manual: Simpan pesan error
 				$error['manual'] = $this->upload->display_errors('', '');
 			}
 		} else {
 			// Opsional: Jika manual wajib diisi, Anda bisa menambahkan error di sini.
-			// $error['manual'] = 'Buku panduan wajib diisi.';
 		}
 
-		// --- 3. KEPUTUSAN (Batalkan Insert jika ada error upload) ---
 		if (!empty($error)) {
-			// Jika terdapat error upload (gambar atau manual)
 
-			// Gabungkan semua pesan error (Gambar dan Manual)
 			$errorMessage = 'Gagal menyimpan data karena masalah upload:<br>';
 			if (isset($error['image'])) {
 				$errorMessage .= 'Gambar Produk: ' . $error['image'] . '<br>';
@@ -86,23 +74,19 @@ class Equipment extends CI_Controller
 				$errorMessage .= 'Buku Panduan: ' . $error['manual'] . '<br>';
 			}
 
-			// Simpan error di flashdata dan redirect kembali ke halaman input (offcanvas)
-			// Kita redirect ke 'equipment' agar pengguna melihat form lagi.
 			$this->session->set_flashdata('error', $errorMessage);
 			redirect('equipment');
-			return; // Hentikan eksekusi function
+			return;
 		}
 
-
-		// --- 4. INSERT DATA KE DATABASE (Hanya jika TIDAK ADA error upload) ---
 		$data = [
 			'name'      => $this->input->post('name'),
 			'category'  => $this->input->post('category'),
 			'specs'     => $this->input->post('specs'),
 			'stock'     => $this->input->post('stock'),
 			'location'  => $this->input->post('location'),
-			'image'     => $image,  // Nama file gambar atau null
-			'manual'    => $manual   // Nama file manual atau null
+			'image'     => $image,
+			'manual'    => $manual
 		];
 
 		$this->Equipment_model->insert($data);
