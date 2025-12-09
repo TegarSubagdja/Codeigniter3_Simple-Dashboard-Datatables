@@ -24,40 +24,57 @@ class Equipment extends CI_Controller
 
 	public function store()
 	{
-		// Upload Gambar
-		$configImg['upload_path'] = './uploads/images/';
+		// --- 1. Upload Gambar Produk (image) ---
+		// Konfigurasi untuk Gambar
+		$configImg['upload_path']   = './uploads/images/';
 		$configImg['allowed_types'] = 'jpg|png|jpeg';
-		$configImg['max_size'] = 2048;
+		$configImg['max_size']      = 2048; // Max 2MB
+		$configImg['encrypt_name']  = TRUE; // Tambahan: Enkripsi nama file agar unik
+
 		$this->load->library('upload', $configImg);
 
 		$image = null;
 		if ($this->upload->do_upload('image')) {
 			$image = $this->upload->data('file_name');
+		} else {
+			// Opsional: Handle error upload gambar (misalnya log error)
+			// echo $this->upload->display_errors(); exit; 
 		}
 
-		// Upload Manual
-		$configPdf['upload_path'] = './uploads/manuals/';
+		// --- 2. Upload Buku Panduan (manual) ---
+		// Konfigurasi untuk PDF Manual
+		$configPdf['upload_path']   = './uploads/manuals/';
 		$configPdf['allowed_types'] = 'pdf';
-		$configPdf['max_size'] = 4096;
+		$configPdf['max_size']      = 4096; // Max 4MB
+		$configPdf['encrypt_name']  = TRUE; // Tambahan: Enkripsi nama file agar unik
+
+		// Penting: Inisialisasi ulang library 'upload' dengan konfigurasi baru
 		$this->upload->initialize($configPdf);
 
 		$manual = null;
 		if ($this->upload->do_upload('manual')) {
 			$manual = $this->upload->data('file_name');
+		} else {
+			// Opsional: Handle error upload manual
+			// Jika manual tidak wajib, Anda bisa mengabaikan error
 		}
 
-		// Insert Data
+		// --- 3. Insert Data ke Database ---
 		$data = [
 			'name'      => $this->input->post('name'),
 			'category'  => $this->input->post('category'),
 			'specs'     => $this->input->post('specs'),
-			'image'     => $image,
-			'manual'    => $manual,
-			'stock'     => $this->input->post('stock'),
-			'location'  => $this->input->post('location')
+			'stock'     => $this->input->post('stock'),   // SESUAIKAN: Mengambil dari input name="stock"
+			'location'  => $this->input->post('location'),
+			'image'     => $image, // Nama file gambar atau null
+			'manual'    => $manual  // Nama file manual atau null
 		];
 
 		$this->Equipment_model->insert($data);
+
+		// Opsional: Set flashdata untuk notifikasi sukses
+		// $this->session->set_flashdata('success', 'Data produk berhasil ditambahkan!');
+
 		redirect('equipment');
 	}
 

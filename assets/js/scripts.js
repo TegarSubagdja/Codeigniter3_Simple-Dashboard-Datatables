@@ -18,10 +18,25 @@ $(document).ready(function () {
 		}
 	});
 
+	$('#manualUploadZone').on('click', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		$('#product_manual').trigger('click');
+	});
+
 	$('#uploadZone').on('click', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
 		$('#product_image').trigger('click');
+	});
+
+	$('#product_manual').on('change', function () {
+		var fileName = $(this).val().split('\\').pop();
+		if (fileName) {
+			$('#manualUploadZone #manual_file_display').text(fileName);
+		} else {
+			$('#manualUploadZone #manual_file_display').text('Click here to choose file');
+		}
 	});
 
 	$('#product_image').on('change', function () {

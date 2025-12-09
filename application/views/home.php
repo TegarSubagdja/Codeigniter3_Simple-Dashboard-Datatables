@@ -133,18 +133,40 @@
 				</div>
 
 				<div class="modal-body">
-					<form action="<?= site_url('equipment/save') ?>" method="post" enctype="multipart/form-data">
+					<form action="<?= site_url('equipment/store') ?>" method="post" enctype="multipart/form-data">
 						<div class="form-group">
-							<label for="product_name">Product Name</label>
+							<label for="product_name">Nama Produk</label>
 							<input type="text" class="form-control" id="product_name" name="name" required>
+						</div>
+						<div class="form-group">
+							<label for="product_category">Kategori</label>
+							<input type="text" class="form-control" id="product_category" name="category" required>
+						</div>
+						<div class="form-group">
+							<label for="product_stok">Stok Barang</label>
+							<input type="text" class="form-control" id="product_stok" name="stok" required>
+						</div>
+						<div class="form-group">
+							<label for="product_location">Lokasi</label>
+							<input type="text" class="form-control" id="product_location" name="location" required>
 						</div>
 						<div class="form-group">
 							<label for="product_specs">Description / Specs</label>
 							<textarea class="form-control" id="product_specs" name="specs" rows="3" required></textarea>
 						</div>
 						<div class="form-group">
+							<label for="product_manual">Buku Panduan (PDF)</label>
+							<div id="manualUploadZone" class="text-center upload-area">
+								<i class="fa fa-file-pdf-o fa-3x text-muted"></i>
+								<p class="text-muted" style="margin-top: 5px;">
+									<span id="manual_file_display">Click here to choose PDF manual</span>
+								</p>
+								<p class="help-block text-muted" style="font-size: 80%;">Max 4MB, PDF only.</p>
+							</div>
+							<input type="file" id="product_manual" name="manual" style="display: none;">
+						</div>
+						<div class="form-group">
 							<label for="product_image">Product Image</label>
-
 							<div id="uploadZone" class="text-center upload-area">
 								<i class="fa fa-cloud-upload fa-3x text-muted"></i>
 								<p class="text-muted" style="margin-top: 5px;">
