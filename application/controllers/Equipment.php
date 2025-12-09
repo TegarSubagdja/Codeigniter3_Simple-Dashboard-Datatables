@@ -24,108 +24,176 @@ class Equipment extends CI_Controller
 
 	public function store()
 	{
-		// --- 1. Upload Gambar Produk (image) ---
-		// Konfigurasi untuk Gambar
+		// Pastikan library Session dimuat (biasanya di autoload.php)
+
+		$image = null;
+		$manual = null;
+		$error = array(); // Array untuk menyimpan pesan error upload
+
+		// --- 1. PROSES UPLOAD GAMBAR PRODUK (image) ---
 		$configImg['upload_path']   = './uploads/images/';
 		$configImg['allowed_types'] = 'jpg|png|jpeg';
 		$configImg['max_size']      = 2048; // Max 2MB
-		$configImg['encrypt_name']  = TRUE; // Tambahan: Enkripsi nama file agar unik
+		$configImg['encrypt_name']  = TRUE;
 
 		$this->load->library('upload', $configImg);
 
-		$image = null;
-		if ($this->upload->do_upload('image')) {
-			$image = $this->upload->data('file_name');
+		// Hanya coba upload jika file benar-benar dikirim
+		if (!empty($_FILES['image']['name'])) {
+			if ($this->upload->do_upload('image')) {
+				$image = $this->upload->data('file_name');
+			} else {
+				// Gagal Upload Gambar: Simpan pesan error
+				$error['image'] = $this->upload->display_errors('', '');
+			}
 		} else {
-			// Opsional: Handle error upload gambar (misalnya log error)
-			// echo $this->upload->display_errors(); exit; 
+			// Opsional: Jika gambar wajib diisi, Anda bisa menambahkan error di sini.
+			// $error['image'] = 'Gambar produk wajib diisi.';
 		}
 
-		// --- 2. Upload Buku Panduan (manual) ---
-		// Konfigurasi untuk PDF Manual
+		// --- 2. PROSES UPLOAD BUKU PANDUAN (manual) ---
 		$configPdf['upload_path']   = './uploads/manuals/';
 		$configPdf['allowed_types'] = 'pdf';
 		$configPdf['max_size']      = 4096; // Max 4MB
-		$configPdf['encrypt_name']  = TRUE; // Tambahan: Enkripsi nama file agar unik
+		$configPdf['encrypt_name']  = TRUE;
 
-		// Penting: Inisialisasi ulang library 'upload' dengan konfigurasi baru
+		// Inisialisasi ulang library 'upload' dengan konfigurasi PDF
 		$this->upload->initialize($configPdf);
 
-		$manual = null;
-		if ($this->upload->do_upload('manual')) {
-			$manual = $this->upload->data('file_name');
+		// Hanya coba upload jika file benar-benar dikirim
+		if (!empty($_FILES['manual']['name'])) {
+			if ($this->upload->do_upload('manual')) {
+				$manual = $this->upload->data('file_name');
+			} else {
+				// Gagal Upload Manual: Simpan pesan error
+				$error['manual'] = $this->upload->display_errors('', '');
+			}
 		} else {
-			// Opsional: Handle error upload manual
-			// Jika manual tidak wajib, Anda bisa mengabaikan error
+			// Opsional: Jika manual wajib diisi, Anda bisa menambahkan error di sini.
+			// $error['manual'] = 'Buku panduan wajib diisi.';
 		}
 
-		// --- 3. Insert Data ke Database ---
+		// --- 3. KEPUTUSAN (Batalkan Insert jika ada error upload) ---
+		if (!empty($error)) {
+			// Jika terdapat error upload (gambar atau manual)
+
+			// Gabungkan semua pesan error (Gambar dan Manual)
+			$errorMessage = 'Gagal menyimpan data karena masalah upload:<br>';
+			if (isset($error['image'])) {
+				$errorMessage .= 'Gambar Produk: ' . $error['image'] . '<br>';
+			}
+			if (isset($error['manual'])) {
+				$errorMessage .= 'Buku Panduan: ' . $error['manual'] . '<br>';
+			}
+
+			// Simpan error di flashdata dan redirect kembali ke halaman input (offcanvas)
+			// Kita redirect ke 'equipment' agar pengguna melihat form lagi.
+			$this->session->set_flashdata('error', $errorMessage);
+			redirect('equipment');
+			return; // Hentikan eksekusi function
+		}
+
+
+		// --- 4. INSERT DATA KE DATABASE (Hanya jika TIDAK ADA error upload) ---
 		$data = [
 			'name'      => $this->input->post('name'),
 			'category'  => $this->input->post('category'),
 			'specs'     => $this->input->post('specs'),
-			'stock'     => $this->input->post('stock'),   // SESUAIKAN: Mengambil dari input name="stock"
+			'stock'     => $this->input->post('stock'),
 			'location'  => $this->input->post('location'),
-			'image'     => $image, // Nama file gambar atau null
-			'manual'    => $manual  // Nama file manual atau null
+			'image'     => $image,  // Nama file gambar atau null
+			'manual'    => $manual   // Nama file manual atau null
 		];
 
 		$this->Equipment_model->insert($data);
-
-		// Opsional: Set flashdata untuk notifikasi sukses
-		// $this->session->set_flashdata('success', 'Data produk berhasil ditambahkan!');
+		$this->session->set_flashdata('success', 'Data produk baru berhasil ditambahkan!');
 
 		redirect('equipment');
 	}
 
-	public function edit($id)
+	public function update()
 	{
-		$data['equipment'] = $this->Equipment_model->getById($id);
-		$this->load->view('equipment/form_edit', $data);
-	}
+		$id = $this->input->post('id');
 
-	public function update($id)
-	{
+		if (!$id || !is_numeric($id)) {
+			$this->session->set_flashdata('error', 'ID tidak valid!');
+			redirect('equipment');
+			return;
+		}
+
 		$item = $this->Equipment_model->getById($id);
 
-		// Upload Gambar Baru
-		$configImg['upload_path'] = './uploads/images/';
-		$configImg['allowed_types'] = 'jpg|png|jpeg';
-		$this->load->library('upload', $configImg);
-
-		$image = $item->image;
-		if ($this->upload->do_upload('image')) {
-			if ($item->image && file_exists('./uploads/images/' . $item->image)) {
-				unlink('./uploads/images/' . $item->image);
-			}
-			$image = $this->upload->data('file_name');
+		if (!$item) {
+			$this->session->set_flashdata('error', 'Produk tidak ditemukan!');
+			redirect('equipment');
+			return;
 		}
 
-		// Upload Manual Baru
-		$configPdf['upload_path'] = './uploads/manuals/';
-		$configPdf['allowed_types'] = 'pdf';
-		$this->upload->initialize($configPdf);
+		$error = [];
+		$newImage = $item->image;
+		$newManual = $item->manual;
 
-		$manual = $item->manual;
-		if ($this->upload->do_upload('manual')) {
-			if ($item->manual && file_exists('./uploads/manuals/' . $item->manual)) {
-				unlink('./uploads/manuals/' . $item->manual);
+		if (!empty($_FILES['image']['name'])) {
+			$configImg['upload_path'] = './uploads/images/';
+			$configImg['allowed_types'] = 'jpg|png|jpeg';
+			$configImg['max_size'] = 2048;
+			$configImg['encrypt_name'] = TRUE;
+
+			$this->load->library('upload', $configImg);
+
+			if ($this->upload->do_upload('image')) {
+				$newImage = $this->upload->data('file_name');
+			} else {
+				$error['image'] = $this->upload->display_errors('', '');
 			}
-			$manual = $this->upload->data('file_name');
 		}
 
-		// Update Data
+		if (!empty($_FILES['manual']['name'])) {
+			$configPdf['upload_path'] = './uploads/manuals/';
+			$configPdf['allowed_types'] = 'pdf';
+			$configPdf['max_size'] = 4096;
+			$configPdf['encrypt_name'] = TRUE;
+
+			$this->upload->initialize($configPdf);
+
+			if ($this->upload->do_upload('manual')) {
+				$newManual = $this->upload->data('file_name');
+			} else {
+				$error['manual'] = $this->upload->display_errors('', '');
+			}
+		}
+
+		if (!empty($error)) {
+			$msg = "Gagal memperbarui data:<br>";
+			if (isset($error['image'])) $msg .= "Gambar: " . $error['image'] . "<br>";
+			if (isset($error['manual'])) $msg .= "Manual PDF: " . $error['manual'] . "<br>";
+
+			$this->session->set_flashdata('error', $msg);
+			redirect('equipment');
+			return;
+		}
+
+		if (!empty($_FILES['image']['name']) && $item->image && file_exists("./uploads/images/" . $item->image)) {
+			unlink("./uploads/images/" . $item->image);
+		}
+
+		if (!empty($_FILES['manual']['name']) && $item->manual && file_exists("./uploads/manuals/" . $item->manual)) {
+			unlink("./uploads/manuals/" . $item->manual);
+		}
+
 		$data = [
 			'name'      => $this->input->post('name'),
 			'category'  => $this->input->post('category'),
+			'stock'      => $this->input->post('stok'),
+			'location'  => $this->input->post('location'),
 			'specs'     => $this->input->post('specs'),
-			'image'     => $image,
-			'manual'    => $manual,
-			'stock'     => $this->input->post('stock'),
-			'location'  => $this->input->post('location')
+			'image'     => $newImage,
+			'manual'    => $newManual
 		];
 
 		$this->Equipment_model->update($id, $data);
+
+		$this->session->set_flashdata('success', 'Data berhasil diperbarui!');
 		redirect('equipment');
 	}
 
