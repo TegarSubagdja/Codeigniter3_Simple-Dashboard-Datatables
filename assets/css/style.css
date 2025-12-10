@@ -17,6 +17,12 @@ body {
 	font-family: Arial, sans-serif;
 }
 
+.container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 .container-fluid {
 	padding-right: 0;
 	padding-left: 0;
@@ -247,6 +253,24 @@ h2 {
 	padding: 10px;
 }
 
+.modal-header-custom {
+	background-color: var(--accent-color);
+	color: white;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+}
+
+.modal-header-custom .close {
+	color: white;
+	opacity: 1;
+	text-shadow: none;
+}
+
+.modal-footer {
+	border-top: 1px solid #e5e5e5;
+	background-color: transparent;
+}
+
 .modal.right .modal-dialog {
 	position: fixed;
 	margin: 0;
@@ -304,6 +328,17 @@ h2 {
 	background-color: #f8f8f8;
 	color: #333;
 	font-weight: 600;
+}
+
+#productTable td {
+	text-align: center;
+	vertical-align: middle;
+}
+
+#productTable th,
+#productTable td {
+	text-align: center !important;
+	vertical-align: middle !important;
 }
 
 .btn-edit {

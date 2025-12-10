@@ -5,7 +5,7 @@ $('#productTable').DataTable({
 	],
 
 	"columnDefs": [
-		{ "orderable": false, "targets": [3, 4] }
+		{ "orderable": false, "targets": [3, 6, 7] }
 	],
 	responsive: true
 });

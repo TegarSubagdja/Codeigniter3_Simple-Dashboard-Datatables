@@ -16,8 +16,18 @@
 	<div class="container">
 		<div class="card-box">
 			<h3 class="title">Buat Akun Baru</h3>
-			<p class="text-center text-muted" style="margin-bottom: 25px;">Daftar untuk mengakses Dashboard Anda.</p>
+			<p class="text-center text-muted" style="margin-bottom: 25px;">Daftar untuk mengakses Datatable.</p>
+			<?php if ($this->session->flashdata('error')): ?>
+				<div class="alert alert-danger" id="autoAlert">
+					<?= $this->session->flashdata('error'); ?>
+				</div>
+			<?php endif; ?>
 
+			<?php if ($this->session->flashdata('success')): ?>
+				<div class="alert alert-success" id="autoAlert">
+					<?= $this->session->flashdata('success'); ?>
+				</div>
+			<?php endif; ?>
 			<form action="<?= site_url('auth/register') ?>" method="POST">
 
 				<div class="form-group">
@@ -60,6 +70,7 @@
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+	<script src="<?= base_url('assets/js/scripts.js') ?>"></script>
 
 </body>
 

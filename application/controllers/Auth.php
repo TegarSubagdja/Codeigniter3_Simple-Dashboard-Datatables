@@ -24,7 +24,7 @@ class Auth extends CI_Controller
 
 		if (!$user || !password_verify($password, $user->password)) {
 			$this->session->set_flashdata('error', 'Email atau password salah!');
-			redirect('home');
+			redirect('login');
 			return;
 		}
 
@@ -35,7 +35,7 @@ class Auth extends CI_Controller
 			'logged_in'  => TRUE
 		]);
 
-		redirect('auth/login');
+		redirect('home');
 	}
 
 	public function register()
@@ -49,9 +49,15 @@ class Auth extends CI_Controller
 		$email    = $this->input->post('email');
 		$password = $this->input->post('password');
 
+		if (strlen($password) < 8) {
+			$this->session->set_flashdata('error', 'Password minimal 8 karakter!');
+			redirect('register');
+			return;
+		}
+
 		if ($this->User_model->getByEmail($email)) {
 			$this->session->set_flashdata('error', 'Email sudah digunakan!');
-			redirect('home');
+			redirect('register');
 			return;
 		}
 
@@ -65,8 +71,9 @@ class Auth extends CI_Controller
 		$this->User_model->insert($data);
 
 		$this->session->set_flashdata('success', 'Registrasi berhasil, silakan login!');
-		redirect('auth/register');
+		redirect('home');
 	}
+
 
 	public function logout()
 	{

@@ -168,7 +168,7 @@ class Equipment extends CI_Controller
 		$data = [
 			'name'      => $this->input->post('name'),
 			'category'  => $this->input->post('category'),
-			'stock'      => $this->input->post('stok'),
+			'stock'      => $this->input->post('stock'),
 			'location'  => $this->input->post('location'),
 			'specs'     => $this->input->post('specs'),
 			'image'     => $newImage,

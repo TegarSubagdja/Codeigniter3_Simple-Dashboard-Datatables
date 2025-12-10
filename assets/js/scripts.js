@@ -55,31 +55,36 @@ $(document).on('click', '.btn-edit', function () {
 
 	let item = $(this).closest('tr').data('item');
 
-	// Set data umum
 	$('#edit_id').val(item.id);
 	$('#edit_name').val(item.name);
 	$('#edit_category').val(item.category);
-	$('#edit_stok').val(item.stok);
+	$('#edit_stock').val(item.stock);
 	$('#edit_location').val(item.location);
 	$('#edit_specs').val(item.specs);
 
-	// Image preview
 	if (item.image) {
-		$('#edit_preview_image').attr('src', '<?= base_url("uploads/images/") ?>' + item.image);
+		$('#edit_preview_image').attr('src', BASE_IMAGE_URL + item.image);
 	} else {
 		$('#edit_preview_image').attr('src', '');
 	}
 
-	// Manual PDF link
 	if (item.manual) {
 		$('#edit_manual_link').html(
-			'<a href="<?= base_url("uploads/manuals/") ?>' + item.manual + '" target="_blank">' + item.manual + '</a>'
+			'<a href="' + BASE_MANUAL_URL + item.manual + '" target="_blank">' + item.manual + '</a>'
 		);
 	} else {
 		$('#edit_manual_link').html('<span class="text-muted">No manual available</span>');
 	}
-
-	// Tampilkan modal
 	$('#editModal').modal('show');
 });
+
+$(document).ready(function () {
+	$('#loginInfoModal').modal('show');
+});
+
+setTimeout(function () {
+	$("#autoAlert").fadeTo(500, 0).slideUp(500, function () {
+		$(this).remove();
+	});
+}, 2000);
 

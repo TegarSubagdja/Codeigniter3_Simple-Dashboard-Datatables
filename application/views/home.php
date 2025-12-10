@@ -20,9 +20,9 @@
 				<div class="sidebar-menu">
 					<h4>Surya Sarana Dinamika</h4>
 					<a href="#" class="active"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
-					<a href="#"><i class="fa fa-cubes fa-fw"></i> =============</a>
-					<a href="#"><i class="fa fa-users fa-fw"></i> ============= </a>
-					<a href="#"><i class="fa fa-bar-chart fa-fw"></i> =============</a>
+					<a href="#"><i class="fa fa-cubes fa-fw"></i>Produk</a>
+					<a href="#"><i class="fa fa-users fa-fw"></i>User</a>
+					<a href="#"><i class="fa fa-bar-chart fa-fw"></i>Report</a>
 				</div>
 			</div>
 
@@ -55,7 +55,17 @@
 					</div>
 
 					<div class="panel-body">
+						<?php if ($this->session->flashdata('error')): ?>
+							<div class="alert alert-danger" id="autoAlert">
+								<?= $this->session->flashdata('error'); ?>
+							</div>
+						<?php endif; ?>
 
+						<?php if ($this->session->flashdata('success')): ?>
+							<div class="alert alert-success" id="autoAlert">
+								<?= $this->session->flashdata('success'); ?>
+							</div>
+						<?php endif; ?>
 						<div class="clearfix" style="margin-bottom: 15px;">
 							<button type="button" class="btn btn-sm btn-add-new pull-right" data-toggle="modal" data-target="#offcanvasForm">
 								<i class="fa fa-plus"></i> Add New
@@ -67,9 +77,12 @@
 								<thead>
 									<tr>
 										<th width="20" class="text-center">No.</th>
-										<th width="300">Name</th>
-										<th width="300">Description</th>
-										<th width="200">Image</th>
+										<th>Name</th>
+										<th>Kategori</th>
+										<th>Description</th>
+										<th>Stok</th>
+										<th>Lokasi</th>
+										<th>Image</th>
 										<th width="150" class="text-center align-items-center">Action</th>
 									</tr>
 								</thead>
@@ -81,7 +94,10 @@
 												data-item='<?= json_encode($p) ?>'>
 												<td class="text-center"><?= $no++; ?></td>
 												<td><?= html_escape($p->name) ?></td>
+												<td><?= html_escape($p->category) ?></td>
 												<td><?= html_escape($p->specs) ?></td>
+												<td><?= html_escape($p->stock) ?></td>
+												<td><?= html_escape($p->location) ?></td>
 
 												<td class="text-center">
 													<?php if ($p->image): ?>
@@ -219,7 +235,7 @@
 
 						<div class="form-group">
 							<label>Stok Barang</label>
-							<input type="number" class="form-control" name="stok" id="edit_stok" required>
+							<input type="number" class="form-control" name="stock" id="edit_stock" required>
 						</div>
 
 						<div class="form-group">
@@ -276,6 +292,12 @@
 	<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
 	<script src="<?= base_url('assets/js/datatables.js') ?>"></script>
 	<script src="<?= base_url('assets/js/scripts.js') ?>"></script>
+	<script>
+		const BASE_IMAGE_URL = "<?= base_url('uploads/images/') ?>";
+		const BASE_MANUAL_URL = "<?= base_url('uploads/manuals/') ?>";
+	</script>
+
+
 </body>
 
 </html>
